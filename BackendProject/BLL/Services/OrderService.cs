@@ -21,9 +21,46 @@ public class OrderService(UnitOfWork unitOfWork, IOrderRepository orderRepositor
             // нужно положить в БД заказы(orders), а потом их позиции (orderItems)
             // помните, что каждый orderItem содержит ссылку на order (столбец order_id)
             // OrderItem-ов может быть несколько
+            var ordersToInsert = orderUnits.Select(ou => new V1OrderDal //конвертация BLL объектов в DAL объекты
+            {
+                CustomerId = ou.CustomerId,
+                DeliveryAddress = ou.DeliveryAddress,
+                TotalPriceCents = ou.TotalPriceCents,
+                TotalPriceCurrency = ou.TotalPriceCurrency,
+                CreatedAt = now,
+                UpdatedAt = now
+            }).ToArray();
+            
+            var insertedOrders = await orderRepository.BulkInsert(ordersToInsert, token);
+            
+            var orderItemsToInsert = orderUnits
+                .SelectMany((ou, orderIndex) =>
+                    (ou.OrderItems ?? Array.Empty<OrderItemUnit>())
+                        .Select(oi => new V1OrderItemDal
+                         {
+                            OrderId = insertedOrders[orderIndex].Id,
+                            ProductId = oi.ProductId,
+                            Quantity = oi.Quantity,
+                            ProductTitle = oi.ProductTitle,
+                            ProductUrl = oi.ProductUrl,
+                            PriceCents = oi.PriceCents,
+                            PriceCurrency = oi.PriceCurrency,
+                            CreatedAt = now,
+                            UpdatedAt = now
+                         })
+                ).ToArray();
+            
+            V1OrderItemDal[] insertedOrderItems = Array.Empty<V1OrderItemDal>();
+            if (insertedOrders.Length > 0)
+            {
+                insertedOrderItems = await orderItemRepository.BulkInsert(orderItemsToInsert, token);
+            }
+            
             await transaction.CommitAsync(token);
             
-            return ...?
+            var orderItemLookup = insertedOrderItems.ToLookup(x => x.OrderId);
+
+            return Map(insertedOrders, orderItemLookup);
         }
         catch (Exception e) 
         {
