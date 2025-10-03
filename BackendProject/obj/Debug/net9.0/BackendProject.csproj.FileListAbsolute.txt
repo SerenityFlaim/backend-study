@@ -122,3 +122,4 @@
 /home/serenity-flaim/RiderProjects/BackendProject/BackendProject/obj/Debug/net9.0/BackendProject.pdb
 /home/serenity-flaim/RiderProjects/BackendProject/BackendProject/obj/Debug/net9.0/BackendProject.genruntimeconfig.cache
 /home/serenity-flaim/RiderProjects/BackendProject/BackendProject/obj/Debug/net9.0/ref/BackendProject.dll
+/home/serenity-flaim/RiderProjects/BackendProject/BackendProject/obj/Debug/net9.0/BackendProject.sourcelink.json
