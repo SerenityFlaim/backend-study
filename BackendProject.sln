@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackendProject", "BackendProject\BackendProject.csproj", "{DDFBF78A-E4C0-4781-89CE-A7F380B708D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{F6DFC6D1-B106-436D-95F4-20D74E0998D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Migrations", "Migrations\Migrations.csproj", "{DF3B6C59-4CCF-42ED-8985-D5E5E8A656E8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DDFBF78A-E4C0-4781-89CE-A7F380B708D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDFBF78A-E4C0-4781-89CE-A7F380B708D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDFBF78A-E4C0-4781-89CE-A7F380B708D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDFBF78A-E4C0-4781-89CE-A7F380B708D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6DFC6D1-B106-436D-95F4-20D74E0998D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6DFC6D1-B106-436D-95F4-20D74E0998D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6DFC6D1-B106-436D-95F4-20D74E0998D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6DFC6D1-B106-436D-95F4-20D74E0998D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF3B6C59-4CCF-42ED-8985-D5E5E8A656E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF3B6C59-4CCF-42ED-8985-D5E5E8A656E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF3B6C59-4CCF-42ED-8985-D5E5E8A656E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF3B6C59-4CCF-42ED-8985-D5E5E8A656E8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
