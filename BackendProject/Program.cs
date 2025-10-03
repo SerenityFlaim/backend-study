@@ -1,4 +1,7 @@
+using BackendProject.BLL.Services;
 using BackendProject.DAL;
+using BackendProject.DAL.Interfaces;
+using BackendProject.DAL.Repositories;
 using Dapper;
 
 
@@ -7,7 +10,9 @@ DefaultTypeMap.MatchNamesWithUnderscores = true; //сообщает Dapper-у, �
 builder.Services.AddScoped<UnitOfWork>(); // регистрирует зависимость UnitOfWork как scoped
 
 builder.Services.Configure<DbSettings>(builder.Configuration.GetSection(nameof(DbSettings)));
-
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+builder.Services.AddScoped<OrderService>();
 builder.Services.AddControllers(); // зависимость, которая автоматически подхватывает все контроллеры в проекте
 
 builder.Services.AddSwaggerGen(); // добавляем swagger
