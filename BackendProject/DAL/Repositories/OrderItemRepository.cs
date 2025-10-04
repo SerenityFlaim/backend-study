@@ -76,13 +76,13 @@ public class OrderItemRepository(UnitOfWork unitOfWork) : IOrderItemRepository
         if (model.Ids?.Length > 0)
         {
             param.Add("Ids", model.Ids);
-            conditions.Add("id = ANY(@Ids");
+            conditions.Add("id = ANY(@Ids)");
         }
 
         if (model.OrderIds?.Length > 0)
         {
             param.Add("OrderIds", model.OrderIds);
-            conditions.Add("order_ids = ANY(@OrderIds");
+            conditions.Add("order_id = ANY(@OrderIds)");
         }
 
         if (conditions.Count > 0)

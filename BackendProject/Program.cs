@@ -2,7 +2,9 @@ using BackendProject.BLL.Services;
 using BackendProject.DAL;
 using BackendProject.DAL.Interfaces;
 using BackendProject.DAL.Repositories;
+using BackendProject.Validators;
 using Dapper;
+using FluentValidation;
 
 
 var builder = WebApplication.CreateBuilder(args); // создается билдер веб приложения
@@ -13,6 +15,8 @@ builder.Services.Configure<DbSettings>(builder.Configuration.GetSection(nameof(D
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 builder.Services.AddScoped<OrderService>();
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(Program));
+builder.Services.AddScoped<ValidatorFactory>();
 builder.Services.AddControllers(); // зависимость, которая автоматически подхватывает все контроллеры в проекте
 
 builder.Services.AddSwaggerGen(); // добавляем swagger

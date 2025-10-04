@@ -34,7 +34,11 @@ public class UnitOfWork(IOptions<DbSettings> dbSettings): IDisposable
 
     public async ValueTask<NpgsqlTransaction> BeginTransactionAsync(CancellationToken token)
     {
-        _connection ??= await GetConnection(token);
+        if (_connection == null)
+        {
+            _connection = await GetConnection(token);
+        }
+
         return await _connection.BeginTransactionAsync(token);
     }
 

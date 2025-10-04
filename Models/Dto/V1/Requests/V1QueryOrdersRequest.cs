@@ -6,9 +6,9 @@ public class V1QueryOrdersRequest
 
     public long[] CustomerIds { get; set; }
 
-    public int Page { get; set; }
+    public int? Page { get; set; }
 
-    public int PageSize { get; set; }
+    public int? PageSize { get; set; }
     
     public bool IncludeOrderItems { get; set; }
 }

@@ -1,3 +1,8 @@
 BackendProject/Models/obj/Debug/net9.0
-Migrations/obj/Debug/net9.0
+Migrations/obj
+Migrations/bin
+Models/bin
+Models/obj
 BackendProject/obj
+BackendProject/bin
+.idea/
