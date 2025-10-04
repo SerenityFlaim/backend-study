@@ -1,3 +1,4 @@
+using BackendProject;
 using BackendProject.BLL.Services;
 using BackendProject.DAL;
 using BackendProject.DAL.Interfaces;
@@ -12,6 +13,7 @@ DefaultTypeMap.MatchNamesWithUnderscores = true; //сообщает Dapper-у, �
 builder.Services.AddScoped<UnitOfWork>(); // регистрирует зависимость UnitOfWork как scoped
 
 builder.Services.Configure<DbSettings>(builder.Configuration.GetSection(nameof(DbSettings)));
+builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection(nameof(RabbitMqSettings)));
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 builder.Services.AddScoped<OrderService>();
