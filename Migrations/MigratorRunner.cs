@@ -10,7 +10,6 @@ public class MigratorRunner(string connectionString)
     public void Migrate()
     {
         var serviceProvider = CreateServices(); //собираем DI-контейнер
-
         using var scope = serviceProvider.CreateScope(); //область жизни зависимостей
         UpdateDatabase(serviceProvider.GetRequiredService<IMigrationRunner>()); //manual resolving зависимости, не автоматический
     }
