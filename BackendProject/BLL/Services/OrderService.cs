@@ -1,11 +1,14 @@
+using System.Net;
 using BackendProject.BLL.Models;
 using BackendProject.DAL;
 using BackendProject.DAL.Interfaces;
 using BackendProject.DAL.Models;
+using Microsoft.Extensions.Options;
+using Project.Messages;
 
 namespace BackendProject.BLL.Services;
 
-public class OrderService(UnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderItemRepository orderItemRepository)
+public class OrderService(UnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderItemRepository orderItemRepository, RabbitMqService _rabbitMqService, IOptions<RabbitMqSettings> settings)
 {
     /// <summary>
     /// Метод создания заказов
@@ -59,6 +62,28 @@ public class OrderService(UnitOfWork unitOfWork, IOrderRepository orderRepositor
             await transaction.CommitAsync(token);
             
             var orderItemLookup = insertedOrderItems.ToLookup(x => x.OrderId);
+            
+            var messages = ordersToInsert.Select(oti => new OrderCreatedMessage
+            {
+                CustomerId = oti.CustomerId,
+                DeliveryAddress = oti.DeliveryAddress,
+                TotalPriceCents = oti.TotalPriceCents,
+                TotalPriceCurrency = oti.TotalPriceCurrency,
+                CreatedAt = now,
+                UpdatedAt = now,
+                OrderItems = orderItemLookup[oti.Id].Select(oil => new global::Models.Dto.Common.OrderItemUnit()
+                {
+                    ProductId = oil.ProductId,
+                    Quantity = oil.Quantity,
+                    ProductTitle = oil.ProductTitle,
+                    ProductUrl = oil.ProductUrl,
+                    PriceCents = oil.PriceCents,
+                    PriceCurrency = oil.PriceCurrency
+                }).ToArray()
+            }).ToArray();
+            Console.WriteLine(messages);
+            
+            await _rabbitMqService.Publish(messages, settings.Value.OrderCreatedQueue, token);
 
             return Map(insertedOrders, orderItemLookup);
         }
