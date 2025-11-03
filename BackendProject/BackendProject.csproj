@@ -16,6 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Consumer\Consumer.csproj" />
       <ProjectReference Include="..\Migrations\Migrations.csproj" />
       <ProjectReference Include="..\Models\Models.csproj" />
       <ProjectReference Include="..\Project.Common\Project.Common.csproj" />

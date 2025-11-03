@@ -1,3 +1,4 @@
+using System.Text.Json;
 using BackendProject;
 using BackendProject.BLL.Services;
 using BackendProject.DAL;
@@ -24,7 +25,10 @@ builder.Services.AddScoped<RabbitMqService>();
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(Program));
 builder.Services.AddScoped<ValidatorFactory>();
 
-builder.Services.AddControllers(); // зависимость, которая автоматически подхватывает все контроллеры в проекте
+builder.Services.AddControllers().AddJsonOptions(options => 
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+}); // зависимость, которая автоматически подхватывает все контроллеры в проекте
 
 builder.Services.AddSwaggerGen(); // добавляем swagger
 

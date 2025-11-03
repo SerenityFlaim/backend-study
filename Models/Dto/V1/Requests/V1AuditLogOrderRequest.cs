@@ -1,6 +1,6 @@
 namespace Models.Dto.V1.Requests;
 
-public class V1CreateAuditLogOrderRequest
+public class V1AuditLogOrderRequest
 {
     public LogOrder[] Orders { get; set; }
     
