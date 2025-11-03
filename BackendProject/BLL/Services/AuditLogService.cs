@@ -6,7 +6,9 @@ using BackendProject.DAL.Models;
 
 namespace BackendProject.BLL.Services;
 
-public class AuditLogService(UnitOfWork unitOfWork, IAuditLogOrderRepository auditLogRepository, CancellationToken token)
+
+//public class AuditLogService(UnitOfWork unitOfWork, IAuditLogOrderRepository auditLogRepository, CancellationToken token)
+public class AuditLogService(UnitOfWork unitOfWork, IAuditLogOrderRepository auditLogRepository)
 {
     public async Task<AuditLogOrderUnit[]> BatchInsert(AuditLogOrderUnit[] logUnits, CancellationToken token)
     {

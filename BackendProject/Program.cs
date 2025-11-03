@@ -13,13 +13,20 @@ var builder = WebApplication.CreateBuilder(args); // создается билд
 DefaultTypeMap.MatchNamesWithUnderscores = true; //сообщает Dapper-у, что при маппинге результатов sql-операций в объекты C#, надо использовать snake_case
 builder.Services.AddScoped<UnitOfWork>(); // регистрирует зависимость UnitOfWork как scoped
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.SetMinimumLevel(LogLevel.Information); 
+
 builder.Services.Configure<DbSettings>(builder.Configuration.GetSection(nameof(DbSettings)));
 builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection(nameof(RabbitMqSettings)));
 
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+builder.Services.AddScoped<IAuditLogOrderRepository, AuditOrderRepository>();
 
 builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<AuditLogService>();
 builder.Services.AddScoped<RabbitMqService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(Program));
