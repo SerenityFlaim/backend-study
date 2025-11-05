@@ -2,7 +2,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Project.Common;
-
+using BackendProject.Config;
 namespace BackendProject.BLL.Services;
 
 public class RabbitMqService(IOptions<RabbitMqSettings> settings)

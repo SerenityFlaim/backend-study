@@ -1,4 +1,4 @@
-namespace BackendProject;
+namespace BackendProject.Config;
 
 public class RabbitMqSettings
 {

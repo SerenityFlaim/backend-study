@@ -1,4 +1,3 @@
-using BackendProject.BLL.Models;
 using BackendProject.BLL.Services;
 using BackendProject.Validators;
 using Microsoft.AspNetCore.Mvc;
@@ -23,15 +22,17 @@ public class AuditLogController(AuditLogService auditLogService, ValidatorFactor
             return BadRequest(validationResult.ToDictionary());
         }
 
-        var res = await auditLogService.BatchInsert(request.Orders.Select(x => new AuditLogOrderUnit
+        var logUnits = request.Orders.Select(x => new AuditLogOrderUnit
         {
             OrderId = x.OrderId,
             OrderItemId = x.OrderItemId,
             CustomerId = x.CustomerId,
             OrderStatus = x.OrderStatus
-        }).ToArray(), token);
+        }).ToArray();
+
+        var res = await auditLogService.BatchInsert(logUnits, token);
         
-        return Ok(new V1AuditLogOrderResponse()
+        return Ok(new V1AuditLogOrderResponse
         {
             Orders = Map(res)
         });

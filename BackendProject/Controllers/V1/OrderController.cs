@@ -35,8 +35,7 @@ public class OrderController(OrderService orderService, ValidatorFactory validat
                 PriceCurrency = p.PriceCurrency,
             }).ToArray()
         }).ToArray(), token);
-
-
+        
         return Ok(new V1CreateOrderResponse
         {
             Orders = Map(res)

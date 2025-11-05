@@ -7,7 +7,6 @@ using BackendProject.DAL.Models;
 namespace BackendProject.BLL.Services;
 
 
-//public class AuditLogService(UnitOfWork unitOfWork, IAuditLogOrderRepository auditLogRepository, CancellationToken token)
 public class AuditLogService(UnitOfWork unitOfWork, IAuditLogOrderRepository auditLogRepository)
 {
     public async Task<AuditLogOrderUnit[]> BatchInsert(AuditLogOrderUnit[] logUnits, CancellationToken token)
@@ -29,7 +28,7 @@ public class AuditLogService(UnitOfWork unitOfWork, IAuditLogOrderRepository aud
 
             var insertedLogs = await auditLogRepository.BulkInsert(logsToInsert, token);
             await transaction.CommitAsync(token);
-            var result = insertedLogs.Select(x => new AuditLogOrderUnit()
+            var result = insertedLogs.Select(x => new AuditLogOrderUnit
             {
                 OrderId = x.OrderId,
                 OrderItemId = x.OrderItemId,

@@ -1,9 +1,10 @@
 using System.Text;
-using BackendProject;
+using Consumer.Config;
 using Consumer.Clients;
 using Microsoft.Extensions.Options;
 using Models.Dto.V1.Requests;
-using Models.Models;
+using Models.Enums;
+using Newtonsoft.Json.Linq;
 using Project.Common;
 using Project.Messages;
 using RabbitMQ.Client;
@@ -45,8 +46,23 @@ public class OmsOrderCreatedConsumer : IHostedService
             var body = args.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             var order = message.FromJson<OrderCreatedMessage>();
+            
+            Console.WriteLine($"Received order: {order}");
+            Console.WriteLine($"Order.Id = {order.Id}");
+            Console.WriteLine($"Order.CustomerId = {order.CustomerId}");
+            Console.WriteLine($"OrderItems.Count = {order.OrderItems?.Length ?? 0}");
+            foreach (var item in order.OrderItems)
+            {
+                Console.WriteLine(
+                    $"Sending to OMS -> OrderId: {order.Id}, OrderItemId: {item.Id}, CustomerId: {order.CustomerId}, Status: Created");
+            }
 
             Console.WriteLine("Received: " + message);
+            
+            var j = JToken.Parse(message);
+            Console.WriteLine("order_items present? " + (j["order_items"] != null));
+            Console.WriteLine("order_items token type: " + j["order_items"]?.Type);
+            Console.WriteLine("order_items count: " + (j["order_items"]?.Count() ?? 0));
             
             using var scope = _serviceProvider.CreateScope();
             var client = scope.ServiceProvider.GetRequiredService<OmsClient>();

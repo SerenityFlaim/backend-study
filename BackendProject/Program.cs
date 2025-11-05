@@ -5,11 +5,13 @@ using BackendProject.DAL;
 using BackendProject.DAL.Interfaces;
 using BackendProject.DAL.Repositories;
 using BackendProject.Validators;
+using BackendProject.Config;
 using Dapper;
 using FluentValidation;
 
 
 var builder = WebApplication.CreateBuilder(args); // создается билдер веб приложения
+
 DefaultTypeMap.MatchNamesWithUnderscores = true; //сообщает Dapper-у, что при маппинге результатов sql-операций в объекты C#, надо использовать snake_case
 builder.Services.AddScoped<UnitOfWork>(); // регистрирует зависимость UnitOfWork как scoped
 

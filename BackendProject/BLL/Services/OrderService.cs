@@ -4,6 +4,7 @@ using BackendProject.DAL;
 using BackendProject.DAL.Interfaces;
 using BackendProject.DAL.Models;
 using Microsoft.Extensions.Options;
+using BackendProject.Config;
 using Project.Messages;
 
 namespace BackendProject.BLL.Services;
@@ -63,7 +64,7 @@ public class OrderService(UnitOfWork unitOfWork, IOrderRepository orderRepositor
             
             var orderItemLookup = insertedOrderItems.ToLookup(x => x.OrderId);
             
-            var messages = ordersToInsert.Select(oti => new OrderCreatedMessage
+            var messages = insertedOrders.Select(oti => new OrderCreatedMessage
             {
                 CustomerId = oti.CustomerId,
                 DeliveryAddress = oti.DeliveryAddress,
@@ -81,6 +82,7 @@ public class OrderService(UnitOfWork unitOfWork, IOrderRepository orderRepositor
                     PriceCurrency = oil.PriceCurrency
                 }).ToArray()
             }).ToArray();
+            Console.WriteLine("OrderService message:\n");
             Console.WriteLine(messages);
             
             await _rabbitMqService.Publish(messages, settings.Value.OrderCreatedQueue, token);
