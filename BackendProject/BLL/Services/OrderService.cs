@@ -66,22 +66,28 @@ public class OrderService(UnitOfWork unitOfWork, IOrderRepository orderRepositor
             
             var messages = insertedOrders.Select(oti => new OrderCreatedMessage
             {
+                Id = oti.Id,
                 CustomerId = oti.CustomerId,
                 DeliveryAddress = oti.DeliveryAddress,
                 TotalPriceCents = oti.TotalPriceCents,
                 TotalPriceCurrency = oti.TotalPriceCurrency,
-                CreatedAt = now,
-                UpdatedAt = now,
+                CreatedAt = oti.CreatedAt,
+                UpdatedAt = oti.UpdatedAt,
                 OrderItems = orderItemLookup[oti.Id].Select(oil => new global::Models.Dto.Common.OrderItemUnit()
                 {
+                    Id = oil.Id,
+                    OrderId = oil.OrderId,
                     ProductId = oil.ProductId,
                     Quantity = oil.Quantity,
                     ProductTitle = oil.ProductTitle,
                     ProductUrl = oil.ProductUrl,
                     PriceCents = oil.PriceCents,
-                    PriceCurrency = oil.PriceCurrency
+                    PriceCurrency = oil.PriceCurrency,
+                    CreatedAt = oil.CreatedAt,
+                    UpdatedAt = oil.UpdatedAt,
                 }).ToArray()
             }).ToArray();
+            Console.WriteLine("Message ID: " + messages[0].Id);
             Console.WriteLine("OrderService message:\n");
             Console.WriteLine(messages);
             
