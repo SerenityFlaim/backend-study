@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using Consumer.Config;
 using Consumer.Clients;
@@ -39,49 +40,51 @@ public class OmsOrderCreatedConsumer : IHostedService
             autoDelete: false,
             arguments: null, 
             cancellationToken: cancellationToken);
-
+        
+        var sw = new Stopwatch();
+        
+        await _channel.BasicQosAsync(prefetchSize: 0, prefetchCount: 1, global: false, cancellationToken: cancellationToken);
         _consumer = new AsyncEventingBasicConsumer(_channel);
         _consumer.ReceivedAsync += async (sender, args) =>
         {
-            var body = args.Body.ToArray();
-            var message = Encoding.UTF8.GetString(body);
-            var order = message.FromJson<OrderCreatedMessage>();
-            
-            Console.WriteLine($"Received order: {order}");
-            Console.WriteLine($"Order.Id = {order.Id}");
-            Console.WriteLine($"Order.CustomerId = {order.CustomerId}");
-            Console.WriteLine($"OrderItems.Count = {order.OrderItems?.Length ?? 0}");
-            foreach (var item in order.OrderItems)
+            sw.Restart();
+            try
             {
-                Console.WriteLine(
-                    $"Sending to OMS -> OrderId: {order.Id}, OrderItemId: {item.Id}, CustomerId: {order.CustomerId}, Status: Created");
+                var body = args.Body.ToArray();
+                var message = Encoding.UTF8.GetString(body);
+                var order = message.FromJson<OrderCreatedMessage>();
+                
+                Console.WriteLine(message);
+                
+                using var scope = _serviceProvider.CreateScope();
+                var client = scope.ServiceProvider.GetRequiredService<OmsClient>();
+                await client.LogOrder(new V1AuditLogOrderRequest
+                {
+                    Orders = order.OrderItems.Select(x => 
+                        new V1AuditLogOrderRequest.LogOrder
+                        {
+                            OrderId = order.Id,
+                            OrderItemId = x.Id,
+                            CustomerId = order.CustomerId,
+                            OrderStatus = nameof(OrderStatus.Created)
+                        }).ToArray()
+                }, CancellationToken.None);
+                await _channel.BasicAckAsync(args.DeliveryTag, false, cancellationToken);
+                Console.WriteLine($"[ACK] Message {order.Id} acknowledged");
+                sw.Stop();
+                Console.WriteLine($"Order created consumed in {sw.ElapsedMilliseconds} ms");
             }
-
-            Console.WriteLine("Received: " + message);
-            
-            var j = JToken.Parse(message);
-            Console.WriteLine("order_items present? " + (j["order_items"] != null));
-            Console.WriteLine("order_items token type: " + j["order_items"]?.Type);
-            Console.WriteLine("order_items count: " + (j["order_items"]?.Count() ?? 0));
-            
-            using var scope = _serviceProvider.CreateScope();
-            var client = scope.ServiceProvider.GetRequiredService<OmsClient>();
-            await client.LogOrder(new V1AuditLogOrderRequest
+            catch (Exception ex)
             {
-                Orders = order.OrderItems.Select(x => 
-                    new V1AuditLogOrderRequest.LogOrder
-                    {
-                        OrderId = order.Id,
-                        OrderItemId = x.Id,
-                        CustomerId = order.CustomerId,
-                        OrderStatus = nameof(OrderStatus.Created)
-                    }).ToArray()
-            }, CancellationToken.None);
+                Console.WriteLine(ex.Message);
+                await _channel.BasicNackAsync(args.DeliveryTag, false, true, cancellationToken);
+            }
+            
         };
         
         await _channel.BasicConsumeAsync(
             queue: _rabbitMqSettings.Value.OrderCreatedQueue, 
-            autoAck: true, 
+            autoAck: false, 
             consumer: _consumer,
             cancellationToken: cancellationToken);
     }
