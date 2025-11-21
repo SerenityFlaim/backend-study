@@ -53,19 +53,19 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
         
-  service:
+  webapi:
     build:
       context: .
       dockerfile: BackendProject/Dockerfile
-    container_name: service
+    container_name: webapi
     ports:
       - "5000:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings_DefaultConnection=Host=pgbouncer;Port=6432;Database=postgres;Username=user;Password=mypassword
-      - RabbitMQ_Host=rabbitmq
-      - RabbitMQ_Port=5672
+      - ConnectionStrings__DefaultConnection=Host=pgbouncer;Port=6432;Database=postgres;Username=user;Password=mypassword
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__Port=5672
     depends_on:
       - pgbouncer
       - rabbitmq
