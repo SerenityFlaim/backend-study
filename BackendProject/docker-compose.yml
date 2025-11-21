@@ -52,6 +52,41 @@ services:
       - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+        
+  service:
+    build:
+      context: .
+      dockerfile: BackendProject/Dockerfile
+    container_name: service
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings_DefaultConnection=Host=pgbouncer;Port=6432;Database=postgres;Username=user;Password=mypassword
+      - RabbitMQ_Host=rabbitmq
+      - RabbitMQ_Port=5672
+    depends_on:
+      - pgbouncer
+      - rabbitmq
+    restart: unless-stopped
+    
+  consumer:
+    build:
+      context: .
+      dockerfile: Consumer/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=pgbouncer;Port=6432;Database=postgres;Username=user;Password=mypassword
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__Port=5672
+    deploy:
+      replicas: 5
+    depends_on:
+      - rabbitmq
+      - pgbouncer
+    restart: unless-stopped
+        
 
 volumes:
   pgdata:
