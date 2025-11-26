@@ -5,9 +5,10 @@ using BackendProject.DAL.Interfaces;
 using BackendProject.DAL.Repositories;
 using BackendProject.Validators;
 using BackendProject.Config;
+using BackendProject.Jobs;
 using Dapper;
 using FluentValidation;
-
+using Migrations;
 
 var builder = WebApplication.CreateBuilder(args); // создается билдер веб приложения
 
@@ -38,8 +39,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
 }); // зависимость, которая автоматически подхватывает все контроллеры в проекте
 
+builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(); // добавляем swagger
-
+builder.Services.AddHostedService<OrderGenerator>();
 
 var app = builder.Build(); // собираем билдер в приложение
 

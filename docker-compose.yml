@@ -21,6 +21,9 @@ services:
   pgbouncer:
     image: public.ecr.aws/bitnami/pgbouncer:1.24.1
     container_name: pgbouncer
+    depends_on:
+      postgres:
+        condition: service_healthy
     environment:
       - POSTGRESQL_HOST=postgres
       - POSTGRESQL_USERNAME=user
@@ -39,10 +42,8 @@ services:
       - PGBOUNCER_IGNORE_STARTUP_PARAMETERS=extra_float_digits
     ports:
       - "15432:6432"
-    depends_on:
-      postgres:
-        condition: service_healthy
     restart: unless-stopped
+    
 
   rabbitmq:
     image: rabbitmq:3.13-management-alpine
@@ -70,6 +71,7 @@ services:
       - pgbouncer
       - rabbitmq
     restart: unless-stopped
+    
     
   consumer:
     build:
